@@ -2,10 +2,12 @@ from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 
+# Modèle de chaque item dans la commande (payload de création reçu depuis le frontend)
 class OrderItemBase(BaseModel):
     pizza_id: int
     quantity: int
 
+# Payload général de création d'une commande
 class OrderBase(BaseModel):
     customer_id: int
     items: List[OrderItemBase]
@@ -13,14 +15,27 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     pass
 
+# Payload pour mise à jour du statut uniquement
 class OrderUpdate(BaseModel):
     status: Optional[str] = None
 
+# Payload de modification d'une commande (changement des items)
+class OrderModify(BaseModel):
+    items: List[OrderItemBase]
+
+# Payload enrichi renvoyé dans les réponses API
+class OrderItemResponse(OrderItemBase):
+    pizza_name: str
+    unit_price: float
+    subtotal: float
+
+# Schéma de réponse complet d'une commande
 class Order(OrderBase):
     id: int
     status: str
     total_price: float
     created_at: datetime
     updated_at: Optional[datetime] = None
+    items: List[OrderItemResponse]
 
     model_config = ConfigDict(from_attributes=True)
