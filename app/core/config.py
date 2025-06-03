@@ -1,10 +1,17 @@
-from typing import List
-from pydantic_settings import BaseSettings
-from pydantic import AnyHttpUrl, validator
+from typing import List, Union
+from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
+import secrets
+from pathlib import Path
+import logging
+
+# Configuration du logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "Pizza Management System"
+    ENVIRONMENT: str = "development"
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
     
@@ -14,19 +21,24 @@ class Settings(BaseSettings):
     
     # Database
     POSTGRES_SERVER: str
+    POSTGRES_PORT: int
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
     @property
     def DATABASE_URL(self) -> str:
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
+        url = f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        # Log l'URL de connexion en masquant le mot de passe
+        masked_url = f"postgresql://{self.POSTGRES_USER}:****@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        logger.info(f"Database connection URL: {masked_url}")
+        return url
     
     # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: str | List[str]) -> List[str] | str:
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
         elif isinstance(v, (list, str)):
@@ -34,7 +46,7 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     # Security
-    SECRET_KEY: str
+    SECRET_KEY: str = secrets.token_urlsafe(32)
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
@@ -44,7 +56,7 @@ class Settings(BaseSettings):
     SMTP_HOST: str
     SMTP_USER: str
     SMTP_PASSWORD: str
-    EMAILS_FROM_EMAIL: str
+    EMAILS_FROM_EMAIL: EmailStr
     EMAILS_FROM_NAME: str
 
     # File Upload
