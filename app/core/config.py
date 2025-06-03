@@ -47,7 +47,7 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     # Security
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: str  # La clé doit être définie dans le fichier .env
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
@@ -79,4 +79,10 @@ class Settings(BaseSettings):
         case_sensitive = True
         env_file = ".env"
 
-settings = Settings() 
+settings = Settings()
+
+# Log de la clé secrète (premiers caractères uniquement, pour le débogage)
+if settings.SECRET_KEY:
+    logger.info(f"Secret key loaded (first 10 chars): {settings.SECRET_KEY[:10]}...")
+else:
+    logger.error("No secret key found in .env file!") 

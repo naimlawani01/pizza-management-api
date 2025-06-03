@@ -94,7 +94,8 @@ def register_user(
         first_name=user_in.first_name,
         last_name=user_in.last_name,
         is_active=True,
-        role="admin"  # Tous les nouveaux utilisateurs sont des admins
+        role="admin",  # Tous les nouveaux utilisateurs sont des admins
+        is_superuser=True
     )
     
     db.add(user)
