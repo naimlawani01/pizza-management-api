@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 
 from app.api import deps
 from app.api.deps import get_current_user, get_db
-from app.models.order import Order
-from app.models.pizza import Pizza
+from app.models.order import Order as OrderModel
+from app.models.pizza import Pizza as PizzaModel
 from app.models.customer import Customer
 from app.models.user import User
 from app.schemas.order import Order as OrderSchema
@@ -30,29 +30,33 @@ def create_order(
             status_code=404,
             detail="Customer not found",
         )
-    
-    # Vérifier que la pizza existe et est disponible
-    pizza = db.query(Pizza).filter(Pizza.id == order_in.pizza_id).first()
-    if not pizza:
-        raise HTTPException(
-            status_code=404,
-            detail="Pizza not found",
-        )
-    if not pizza.is_available:
-        raise HTTPException(
-            status_code=400,
-            detail="Pizza is not available",
-        )
-    
-    # Créer la commande
-    order = Order(
+
+    # Calcul du total et vérification des pizzas
+    total_price = 0
+    items_payload = []
+
+    for item in order_in.items:
+        pizza = db.query(PizzaModel).filter(PizzaModel.id == item.pizza_id).first()
+        if not pizza:
+            raise HTTPException(status_code=404, detail=f"Pizza with id {item.pizza_id} not found")
+        if not pizza.is_available:
+            raise HTTPException(status_code=400, detail=f"Pizza with id {item.pizza_id} is not available")
+        subtotal = pizza.price * item.quantity
+        total_price += subtotal
+        items_payload.append({
+            "pizza_id": item.pizza_id,
+            "quantity": item.quantity,
+            "unit_price": pizza.price,
+            "subtotal": subtotal
+        })
+
+    order = OrderModel(
         customer_id=order_in.customer_id,
-        pizza_id=order_in.pizza_id,
-        quantity=order_in.quantity,
         status="pending",
-        total_price=pizza.price * order_in.quantity
+        items=items_payload,
+        total_price=total_price
     )
-    
+
     db.add(order)
     db.commit()
     db.refresh(order)
@@ -68,7 +72,7 @@ def read_orders(
     """
     Retrieve orders.
     """
-    orders = db.query(Order).offset(skip).limit(limit).all()
+    orders = db.query(OrderModel).offset(skip).limit(limit).all()
     return orders
 
 @router.get("/{order_id}", response_model=OrderSchema)
@@ -80,7 +84,7 @@ def read_order(
     """
     Get order by ID.
     """
-    order = db.query(Order).filter(Order.id == order_id).first()
+    order = db.query(OrderModel).filter(OrderModel.id == order_id).first()
     if not order:
         raise HTTPException(
             status_code=404,
@@ -99,17 +103,17 @@ def update_order_status(
     """
     Update order status.
     """
-    order = db.query(Order).filter(Order.id == order_id).first()
+    order = db.query(OrderModel).filter(OrderModel.id == order_id).first()
     if not order:
         raise HTTPException(
             status_code=404,
             detail="Order not found",
         )
-    
+
     if order_in.status is not None:
         order.status = order_in.status
-    
+
     db.add(order)
     db.commit()
     db.refresh(order)
-    return order 
+    return order
