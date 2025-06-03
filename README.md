@@ -6,7 +6,7 @@ Une API RESTful pour la gestion d'une pizzeria, construite avec FastAPI et Postg
 
 - Authentification JWT
 - Gestion des utilisateurs et des rôles
-- Gestion des pizzas et des ingrédients
+- Gestion des pizzas disponnible 
 - Gestion des commandes
 - Gestion des clients
 - Upload et gestion des images
