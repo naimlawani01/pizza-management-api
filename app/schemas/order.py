@@ -9,7 +9,7 @@ class OrderItemBase(BaseModel):
 
 # Payload général de création d'une commande
 class OrderBase(BaseModel):
-    customer_id: int
+    user_id: int
     items: List[OrderItemBase]
 
 class OrderCreate(OrderBase):
