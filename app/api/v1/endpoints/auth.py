@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.core import security
 from app.core.config import settings
-from app.core.security import get_password_hash
 from app.api import deps
 from app.models.user import User
 from app.schemas.user import User as UserSchema

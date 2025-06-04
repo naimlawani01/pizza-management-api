@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 
-from app.api import deps
 from app.api.deps import get_current_user, get_db
 from app.models.order import Order as OrderModel
 from app.models.pizza import Pizza as PizzaModel
@@ -23,7 +22,7 @@ def create_order(
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """
-    Créer une nouvelle commande avec plusieurs pizzas.
+    Créer  commande 
     """
     # Vérifie si le user existe
     user = db.query(User).filter(User.id == order_in.user_id).first()
