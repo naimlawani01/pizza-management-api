@@ -24,7 +24,6 @@ def create_order(
     """
     Créer  commande 
     """
-    # Vérifie si le user existe
     user = db.query(User).filter(User.id == order_in.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -63,7 +62,6 @@ def create_order(
     return order
 
 
-# Lecture de toutes les commandes
 @router.get("/", response_model=List[OrderSchema])
 def read_orders(
     db: Session = Depends(get_db),
@@ -78,7 +76,6 @@ def read_orders(
     return orders
 
 
-# Lecture d'une commande par ID
 @router.get("/{order_id}", response_model=OrderSchema)
 def read_order(
     order_id: int,
@@ -94,7 +91,6 @@ def read_order(
     return order
 
 
-# Modification du statut de la commande
 @router.put("/{order_id}", response_model=OrderSchema)
 def update_order_status(
     *,
@@ -121,7 +117,6 @@ def update_order_status(
     return order
 
 
-# Suppression de la commande (annulation autorisée uniquement dans les 5 premières minutes)
 @router.delete("/{order_id}")
 def delete_order(
     order_id: int,
@@ -129,7 +124,7 @@ def delete_order(
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """
-    Supprimer une commande (uniquement si elle a moins de 5 minutes).
+    Supprimer  commande
     """
     order = db.query(OrderModel).filter(OrderModel.id == order_id).first()
     if not order:
@@ -148,7 +143,6 @@ def delete_order(
     return {"detail": "Order deleted successfully"}
 
 
-# Modification des items de la commande (possible uniquement si status == pending)
 @router.put("/{order_id}/modify", response_model=OrderSchema)
 def modify_order(
     *,
@@ -158,7 +152,7 @@ def modify_order(
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """
-    Modifier les items d'une commande uniquement si son statut est encore 'pending'.
+    Modifier les items d'une commande
     """
     order = db.query(OrderModel).filter(OrderModel.id == order_id).first()
     if not order:

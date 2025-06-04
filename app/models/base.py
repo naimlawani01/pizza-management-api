@@ -4,4 +4,4 @@ from pydantic import BaseModel
 
 class TimestampModel(BaseModel):
     created_at: datetime
-    updated_at: Optional[datetime] = None  # ✅ Le fix
+    updated_at: Optional[datetime] = None 

@@ -5,7 +5,6 @@ from passlib.context import CryptContext
 from app.core.config import settings
 import logging
 
-# Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -25,12 +24,11 @@ def create_access_token(
     logger.info(f"Current time: {datetime.utcnow()}")
     
     to_encode = {
-        "exp": int(expire.timestamp()),  # Convertir en timestamp Unix
+        "exp": int(expire.timestamp()),
         "sub": str(subject),
         "type": "access"
     }
     
-    # Ajouter les informations de l'utilisateur dans un objet user_info
     if user_data:
         to_encode["user_info"] = {
             "email": user_data.get("email"),

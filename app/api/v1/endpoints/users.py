@@ -69,7 +69,7 @@ def register_user(
     """
     Register new user (admin only).
     """
-    # Vérifier si l'email existe déjà
+
     user = db.query(User).filter(User.email == user_in.email).first()
     if user:
         raise HTTPException(
@@ -77,7 +77,7 @@ def register_user(
             detail="The user with this email already exists.",
         )
     
-    # Vérifier si le username existe déjà
+
     user = db.query(User).filter(User.username == user_in.username).first()
     if user:
         raise HTTPException(
@@ -85,7 +85,7 @@ def register_user(
             detail="The user with this username already exists.",
         )
     
-    # Créer le nouvel utilisateur
+
     user = User(
         email=user_in.email,
         username=user_in.username,
@@ -93,7 +93,7 @@ def register_user(
         first_name=user_in.first_name,
         last_name=user_in.last_name,
         is_active=True,
-        role="admin",  # Tous les nouveaux utilisateurs sont des admins
+        role="admin",
         is_superuser=True
     )
     

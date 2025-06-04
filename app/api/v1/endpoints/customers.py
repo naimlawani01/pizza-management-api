@@ -20,7 +20,7 @@ def create_customer(
     """
     Create new customer.
     """
-    # Vérifier si le client existe déjà
+
     customer = db.query(Customer).filter(Customer.email == customer_in.email).first()
     if customer:
         raise HTTPException(
@@ -28,7 +28,7 @@ def create_customer(
             detail="A customer with this email already exists.",
         )
     
-    # Créer le nouveau client
+    
     customer = Customer(
         email=customer_in.email,
         first_name=customer_in.first_name,
