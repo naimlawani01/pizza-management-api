@@ -35,7 +35,7 @@ def login(
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
-    # Convertir l'utilisateur en dict pour le payload
+    
     user_dict = UserSchema.model_validate(user).model_dump()
     
     return {
