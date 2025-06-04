@@ -18,11 +18,11 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     status = Column(String, default=OrderStatus.PENDING.value)  # Statut par défaut : pending
     items = Column(JSON, nullable=False)  # Liste des pizzas commandées (stockée en JSON)
     total_price = Column(Float, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())  # Auto timestamp
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())  # Auto update timestamp
 
-    customer = relationship("Customer", back_populates="orders")
+    user = relationship("User", back_populates="orders")
