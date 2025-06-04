@@ -27,9 +27,9 @@ def create_order(
     Créer une nouvelle commande avec plusieurs pizzas.
     """
     # Vérifie si le customer existe
-    customer = db.query(Customer).filter(Customer.id == order_in.customer_id).first()
-    if not customer:
-        raise HTTPException(status_code=404, detail="Customer not found")
+    user = db.query(User).filter(User.id == order_in.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
 
     total_price = 0
     items_payload = []
@@ -53,7 +53,7 @@ def create_order(
         })
 
     order = OrderModel(
-        customer_id=order_in.customer_id,
+        user_id=order_in.user_id,
         status=OrderStatus.PENDING.value,
         items=items_payload,
         total_price=total_price
