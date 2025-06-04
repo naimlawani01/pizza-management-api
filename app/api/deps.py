@@ -8,11 +8,9 @@ import logging
 from datetime import datetime
 
 from app.core.config import settings
-from app.core.security import verify_password
 from app.db.session import SessionLocal
 from app.models.user import User
 
-# Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -30,12 +28,10 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme)
 ) -> User:
     try:
-        # Log du token reçu
         logger.info(f"Received token: {token[:10]}...")
         logger.info(f"Current time: {datetime.utcnow()}")
         logger.info(f"Using secret key (first 10 chars): {settings.SECRET_KEY[:10]}...")
         
-        # Décodage du token
         payload = jwt.decode(
             token, 
             settings.SECRET_KEY, 
@@ -43,7 +39,6 @@ async def get_current_user(
         )
         logger.info(f"Decoded payload: {payload}")
         
-        # Vérification du type de token
         if payload.get("type") != "access":
             logger.error("Invalid token type")
             raise HTTPException(
@@ -51,7 +46,6 @@ async def get_current_user(
                 detail="Invalid token type"
             )
         
-        # Vérification de l'expiration
         exp = payload.get("exp")
         if exp:
             exp_datetime = datetime.fromtimestamp(exp)
@@ -63,7 +57,6 @@ async def get_current_user(
                     detail="Token has expired"
                 )
         
-        # Récupération de l'ID utilisateur
         user_id: str = payload.get("sub")
         if user_id is None:
             logger.error("No user ID in token")
@@ -72,7 +65,6 @@ async def get_current_user(
                 detail="Could not validate credentials",
             )
         
-        # Conversion de l'ID en entier
         try:
             user_id = int(user_id)
         except ValueError:
@@ -82,7 +74,6 @@ async def get_current_user(
                 detail="Invalid user ID format"
             )
         
-        # Recherche de l'utilisateur
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
             logger.error(f"User not found with ID: {user_id}")
