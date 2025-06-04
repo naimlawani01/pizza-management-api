@@ -7,7 +7,6 @@ from app.api import deps
 from app.api.deps import get_current_user, get_db
 from app.models.order import Order as OrderModel
 from app.models.pizza import Pizza as PizzaModel
-from app.models.customer import Customer
 from app.models.user import User
 from app.schemas.order import Order as OrderSchema
 from app.schemas.order import OrderCreate, OrderUpdate, OrderModify
@@ -26,7 +25,7 @@ def create_order(
     """
     Créer une nouvelle commande avec plusieurs pizzas.
     """
-    # Vérifie si le customer existe
+    # Vérifie si le user existe
     user = db.query(User).filter(User.id == order_in.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
