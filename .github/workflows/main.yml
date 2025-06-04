@@ -2,9 +2,27 @@ name: Tests
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, main ]
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, main ]
+
+env:
+  ACCESS_TOKEN_EXPIRE_MINUTES: "1440"
+  ALGORITHM: "HS256"
+  API_V1_STR: "/api/v1"
+  APP_NAME: "Pizza Management System"
+  BACKEND_CORS_ORIGINS: '["http://localhost:3000","http://localhost:8080", "https://pizza-management-api-production.up.railway.app"]'
+  DEBUG: "True"
+  ENVIRONMENT: "development"
+  HOST: "0.0.0.0"
+  PORT: "8000"
+  POSTGRES_DB: "railway"
+  POSTGRES_PASSWORD: "yQLRWTiYYkVzZiKpibLyBqmoailuFUuo"
+  POSTGRES_PORT: "5432"
+  POSTGRES_SERVER: "postgres.railway.internal"
+  POSTGRES_USER: "postgres"
+  SECRET_KEY: "alavalampitariza"
+  DATABASE_URL: "postgresql://postgres:yQLRWTiYYkVzZiKpibLyBqmoailuFUuo@postgres.railway.internal:5432/railway"
 
 jobs:
   test:
