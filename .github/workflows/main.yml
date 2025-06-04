@@ -1,36 +1,29 @@
-name: Pizza Management API CI
+name: Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ develop ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        python-version: '3.11'
     
     - name: Install dependencies
-      run: npm ci
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
     
-    - name: Run linting
-      run: npm run lint
-      
     - name: Run tests
-      run: npm test
-      
-    - name: Build
-      run: npm run build 
+      run: |
+        pytest tests/ -v 
