@@ -24,10 +24,14 @@ class OrderModify(BaseModel):
     items: List[OrderItemBase]
 
 # Payload enrichi renvoyé dans les réponses API
-class OrderItemResponse(OrderItemBase):
+class OrderItemResponse(BaseModel):
+    pizza_id: int
     pizza_name: str
+    quantity: int
     unit_price: float
     subtotal: float
+
+    model_config = ConfigDict(from_attributes=True)
 
 # Schéma de réponse complet d'une commande
 class Order(OrderBase):
