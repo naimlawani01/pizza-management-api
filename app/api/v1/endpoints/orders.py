@@ -22,7 +22,7 @@ def create_order(
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """
-    Créer une nouvelle commande avec plusieurs pizzas.
+    Créer  commande 
     """
     # Vérifie si le user existe
     user = db.query(User).filter(User.id == order_in.user_id).first()
